@@ -19,7 +19,7 @@ export default class Controller extends preact.Component {
 			return <div>
 				Please draw "{state.stateData}"
 				<br />
-				<SketchCanvas bind={linkState(this, 'canvas')} />
+				<SketchCanvas bind={linkState(this, 'canvas')} premium={state.premium} />
 				<br />
 				<button onClick={this.submitDrawing.bind(this)}>Submit</button>
 			</div>;
@@ -93,5 +93,7 @@ export default class Controller extends preact.Component {
 				if(data.type == "state") this.setState({gameState: data.state, stateData: data.stateData, done: false});
 			}
 		};
+		this.state.premium = this.state.AC.isPremium();
+		this.state.AC.onPremium = () => this.setState({premium: true});
 	}
 }

@@ -3,11 +3,11 @@ import linkState from 'linkstate';
 
 export default class SketchCanvas extends preact.Component {
 	render(props, state) {
-		return <div className={props.premium ? 'premium' : ''}>
+		return <div className={'sketchCanvas' + (props.premium ? ' premium' : '')}>
 			<canvas width="1200" height="1200" style="border: 2px solid grey; width: 90%"></canvas>
 			<br />
 			<div class="colorChoice">
-				{["black", "red", "lime", "blue"].map(color => <ColorChoice color={color} selected={color == this.state.color} change={linkState(this, 'color')} />)}
+				{["white", "black", "red", "lime", "blue", "peru"].map(color => <ColorChoice color={color} selected={color == this.state.color} change={linkState(this, 'color')} />)}
 			</div>
 			<div class="sizeChoice">
 				{[16, 32, 64, 128].map(size => <SizeChoice size={size} selected={size == this.state.size} change={linkState(this, 'size')} />)}
@@ -81,6 +81,6 @@ class SizeChoice extends preact.Component {
 	render(props, state) {
 		const oss = (props.size*90/1200)+'vw';
 		const offset = 'calc(50% - '+(props.size*90/2400)+'vw)';
-		return <div><div class={props.selected ? 'selected' : ''} style={{width: oss, height: oss, left: offset, top: offset}} onClick={props.change.bind(this, props.size)}></div></div>;
+		return <div onClick={props.change.bind(this, props.size)}><div class={props.selected ? 'selected' : ''} style={{width: oss, height: oss, left: offset, top: offset}}></div></div>;
 	}
 }

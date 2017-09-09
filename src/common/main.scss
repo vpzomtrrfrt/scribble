@@ -5,6 +5,7 @@ html {
 body {
 	height: 100%;
 	margin: 0;
+	padding-top: 35px;
 	background-color: white;
 }
 
@@ -42,6 +43,7 @@ body {
 }
 
 .colorChoice, .sizeChoice {
+	margin-bottom: .5em;
 	display: flex;
 	justify-content: space-around;
 	> div {
@@ -69,6 +71,7 @@ body {
 	top: 0;
 	height: 100%;
 	width: 100%;
+	border: .2vw solid grey;
 }
 
 .sizeChoice > div > div {

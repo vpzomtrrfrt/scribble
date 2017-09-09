@@ -31,7 +31,7 @@ export default class Screen extends preact.Component {
 			return <div class="mainAreaThing">
 				<div>
 					<img src={state.drawings[state.currentPlayer].image}></img>
-					<CaptionList width="20%" hide={true} captions={state.drawings[state.currentPlayer].captions} playerCount={state.players.length} />
+					<CaptionList width="20%" hide={true} captions={state.drawings[state.currentPlayer].captions} playerCount={state.players.filter(x => x != state.currentPlayer).length} />
 				</div>
 			</div>;
 		}
@@ -64,7 +64,20 @@ export default class Screen extends preact.Component {
 			console.log(id, "connected!");
 			this.state.players.push(id);
 			this.setState({});
-			this.state.AC.message(id, {type: "state", state: this.state.gameState});
+			let data;
+			if(this.state.gameState == States.DRAWING) {
+				if(id in this.state.drawings) data = this.state.drawings[id].prompt;
+				else {
+					this.state.drawings[id] = {
+						prompt: getWord()
+					};
+					data = this.state.drawings[id].prompt;
+				}
+			}
+			else if(this.state.gameState == States.CHOOSE) {
+				data = this.state.captions;
+			}
+			this.state.AC.message(id, {type: "state", state: this.state.gameState, stateData: data});
 		};
 		this.state.AC.onDisconnect = (id) => {
 			console.log(id, "disconnected!");
