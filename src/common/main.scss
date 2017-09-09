@@ -41,7 +41,7 @@ body {
 	}
 }
 
-.colorChoice {
+.colorChoice, .sizeChoice {
 	display: flex;
 	justify-content: space-around;
 	> div {
@@ -56,14 +56,21 @@ body {
 		> div {
 			border-radius: 50%;
 			position: absolute;
-			left: 0;
-			top: 0;
-			height: 100%;
-			width: 100%;
 			box-sizing: border-box;
 			&.selected {
 				border: 1vw solid grey;
 			}
 		}
 	}
+}
+
+.colorChoice > div > div {
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+}
+
+.sizeChoice > div > div {
+	background-color: black;
 }
