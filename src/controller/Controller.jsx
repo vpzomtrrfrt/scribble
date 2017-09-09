@@ -4,7 +4,15 @@ import States from '../common/states';
 export default class Controller extends preact.Component {
 	render(props, state) {
 		if(state.gameState == States.NOT_STARTED) {
-			return <div>not started</div>;
+			return <div>
+				not started
+			<br />
+			<button onClick={() => {
+				state.AC.message(AirConsole.SCREEN, {
+					type: "start"
+				});
+			}}>Start</button>
+				</div>;
 		}
 		return <div>wut</div>;
 	}
