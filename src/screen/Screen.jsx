@@ -1,8 +1,11 @@
 import preact from 'preact';
 import States from '../common/states';
+import wordlist from '../common/words';
 import CaptionList from '../common/CaptionList';
 
 import 'preact/devtools';
+
+console.log(wordlist);
 
 export default class Screen extends preact.Component {
 	render(props, state) {
@@ -155,7 +158,7 @@ export default class Screen extends preact.Component {
 		this.state.players.forEach(player => {
 			let data;
 			if(state == States.DRAWING) {
-				data = "a donkey";
+				data = wordlist[Math.floor(Math.random()*wordlist.length)];
 				this.state.drawings[player] = {
 					prompt: data
 				};
