@@ -33,6 +33,19 @@ export default class Screen extends preact.Component {
 				<h1>{Object.keys(state.drawings[state.currentPlayer].choices).length}/{state.players.length}</h1>
 			</div>;
 		}
+		else if(state.gameState == States.REVEAL) {
+			return <div>
+				{state.captions.map(caption => {
+					let fools = 0;
+					const choices = state.drawings[state.currentPlayer].choices;
+					for(let player in choices) {
+						const choice = choices[player];
+						if(choice == caption) fools++;
+					}
+					return <h1>{caption} - {fools}</h1>;
+				})}
+			</div>;
+		}
 		return <div>wut</div>;
 	}
 
@@ -84,7 +97,12 @@ export default class Screen extends preact.Component {
 			}
 			else if(data.type == "choice") {
 				this.state.drawings[this.state.currentPlayer].choices[id] = data.data;
-				this.setState({});
+				if(Object.keys(this.state.drawings[this.state.currentPlayer].choices).length >= this.state.players.length) {
+					this.enterState(States.REVEAL);
+				}
+				else {
+					this.setState({});
+				}
 			}
 			else {
 				console.log("Unrecognized command:", data);
