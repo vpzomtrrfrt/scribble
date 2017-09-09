@@ -10,7 +10,16 @@ console.log(wordlist);
 export default class Screen extends preact.Component {
 	render(props, state) {
 		if(state.gameState == States.NOT_STARTED) {
-			return <div>not started, {state.players.length} players</div>;
+			return <div>
+				not started, {state.players.length} players
+				<br />
+				{this.state.scores && <center>
+					<h1>Scores</h1>
+					{Object.keys(this.state.scores).sort((a, b) => this.state.scores[b]-this.state.scores[a]).map(key => {
+						return <h3>{this.state.AC.getNickname(key)} - {this.state.scores[key]}</h3>;
+					})}
+				</center>}
+			</div>;
 		}
 		else if(state.gameState == States.DRAWING) {
 			return <div>
@@ -119,6 +128,7 @@ export default class Screen extends preact.Component {
 		this.setState({gameState: state});
 		if(state == States.DRAWING) {
 			this.state.drawings = {};
+			this.state.scores = {};
 		}
 		else if(state == States.CHOOSE) {
 			const prompt = this.state.drawings[this.state.currentPlayer].prompt;
@@ -130,11 +140,25 @@ export default class Screen extends preact.Component {
 			this.state.captions.forEach(caption => {
 				let fools = 0;
 				const choices = this.state.drawings[this.state.currentPlayer].choices;
+				let correct = caption == this.state.drawings[this.state.currentPlayer].prompt;
 				for(let player in choices) {
 					const choice = choices[player];
-					if(choice == caption) fools++;
+					if(choice == caption) {
+						fools++;
+						if(correct) {
+							this.state.scores[player] = (this.state.scores[player] || 0) + 1;
+						}
+					}
 				}
-				let correct = caption == this.state.drawings[this.state.currentPlayer].prompt;
+				if(!correct) {
+					const captions = this.state.drawings[this.state.currentPlayer].captions;
+					for(let player in captions) {
+						if(captions[player] == caption) {
+							this.state.scores[player] = (this.state.scores[player] || 0) + fools;
+							if(this.state.drawings[this.state.currentPlayer].choices[player] == caption) this.state.scores[player]--;
+						}
+					}
+				}
 				tr[caption] = {
 					correct,
 					fools
