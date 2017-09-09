@@ -40,3 +40,30 @@ body {
 		}
 	}
 }
+
+.colorChoice {
+	display: flex;
+	justify-content: space-around;
+	> div {
+		width: 10%;
+		display: inline-block;
+		position: relative;
+		&:before {
+			margin-top: 100%;
+			content: "";
+			display: block;
+		}
+		> div {
+			border-radius: 50%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 100%;
+			width: 100%;
+			box-sizing: border-box;
+			&.selected {
+				border: 1vw solid grey;
+			}
+		}
+	}
+}

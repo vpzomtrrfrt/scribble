@@ -1,8 +1,15 @@
 import preact from 'preact';
+import linkState from 'linkstate';
 
 export default class SketchCanvas extends preact.Component {
 	render(props, state) {
-		return <canvas width="1200" height="1200" style="border: 2px solid grey; width: 90%"></canvas>;
+		return <div className={props.premium ? 'premium' : ''}>
+			<canvas width="1200" height="1200" style="border: 2px solid grey; width: 90%"></canvas>
+			<br />
+			<div class="colorChoice">
+				{["black", "red", "lime", "blue"].map(color => <ColorChoice color={color} selected={color == this.state.color} change={linkState(this, 'color')} />)}
+			</div>
+		</div>;
 	}
 	offset(canvas, coords) {
 		const rect = canvas.getBoundingClientRect();
@@ -13,20 +20,24 @@ export default class SketchCanvas extends preact.Component {
 			y: (coords.y-rect.top)*scale
 		};
 	}
+	constructor() {
+		super();
+		this.state.color = "black";
+	}
 	componentDidMount() {
-		const canvas = this.base;
+		const canvas = this.base.getElementsByTagName('canvas')[0];
 		if(this.props.bind) this.props.bind(canvas);
 		const ctx = canvas.getContext('2d');
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-		function drawLine(prev2, prev, now) {
+		const drawLine = (prev2, prev, now) => {
 			ctx.beginPath();
 			ctx.lineJoin = "round";
 			ctx.moveTo(prev2.x, prev2.y);
 			ctx.lineTo(prev.x, prev.y);
 			ctx.lineTo(now.x, now.y);
 			ctx.lineWidth = 16;
-			ctx.strokeColor = "black";
+			ctx.strokeStyle = this.state.color;
 			ctx.stroke();
 			console.log(now);
 		}
@@ -53,5 +64,11 @@ export default class SketchCanvas extends preact.Component {
 				drawLine(prev2, prev, now);
 			}
 		};
+	}
+}
+
+class ColorChoice extends preact.Component {
+	render(props, state) {
+		return <div><div class={props.selected ? 'selected' : ''} style={{backgroundColor: props.color}} onClick={props.change.bind(this, props.color)}></div></div>;
 	}
 }
