@@ -17,7 +17,7 @@ export default class Screen extends preact.Component {
 			console.log(id, "connected!");
 			this.state.players.push(id);
 			this.setState({});
-			this.state.AC.message(id, {type: "state", data: this.state.gameState});
+			this.state.AC.message(id, {type: "state", state: this.state.gameState});
 		};
 		this.state.AC.onDisconnect = (id) => {
 			console.log(id, "disconnected!");
@@ -38,6 +38,12 @@ export default class Screen extends preact.Component {
 
 	enterState(state) {
 		this.setState({gameState: state});
-		this.state.players.forEach(player => this.state.AC.message(player, {type: "state", data: state}));
+		this.state.players.forEach(player => {
+			let data;
+			if(state == States.DRAWING) {
+				data = "a donkey";
+			}
+			this.state.AC.message(player, {type: "state", state: state, stateData: data});
+		});
 	}
 }
