@@ -1,5 +1,7 @@
 import preact from 'preact';
 
+require('../common/main.scss');
+
 import Controller from './Controller';
 
 console.log("Hi, I'm the controller!");
