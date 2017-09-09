@@ -7,6 +7,10 @@ import 'preact/devtools';
 
 console.log(wordlist);
 
+function getWord() {
+	return wordlist[Math.floor(Math.random()*wordlist.length)];
+}
+
 export default class Screen extends preact.Component {
 	render(props, state) {
 		if(state.gameState == States.NOT_STARTED) {
@@ -182,7 +186,7 @@ export default class Screen extends preact.Component {
 		this.state.players.forEach(player => {
 			let data;
 			if(state == States.DRAWING) {
-				data = wordlist[Math.floor(Math.random()*wordlist.length)];
+				data = getWord();
 				this.state.drawings[player] = {
 					prompt: data
 				};
