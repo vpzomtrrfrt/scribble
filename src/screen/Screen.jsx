@@ -12,7 +12,7 @@ export default class Screen extends preact.Component {
 		else if(state.gameState == States.DRAWING) {
 			return <div>
 				Please draw stuff now<br />
-				{Object.keys(this.state.drawings).length}/{state.players.length}
+				{Object.values(this.state.drawings).filter(value => value.image).length}/{state.players.length}
 				</div>;
 		}
 		else if(state.gameState == States.CAPTION) {
@@ -35,14 +35,9 @@ export default class Screen extends preact.Component {
 		}
 		else if(state.gameState == States.REVEAL) {
 			return <div>
-				{state.captions.map(caption => {
-					let fools = 0;
-					const choices = state.drawings[state.currentPlayer].choices;
-					for(let player in choices) {
-						const choice = choices[player];
-						if(choice == caption) fools++;
-					}
-					return <h1>{caption} - {fools}</h1>;
+				{Object.keys(state.results).map(key => {
+					const value = state.results[key];
+					return <h1>{value.correct ? '✅' : '❌'} {key} - {value.fools}</h1>;
 				})}
 			</div>;
 		}
@@ -66,16 +61,33 @@ export default class Screen extends preact.Component {
 		};
 		this.state.AC.onMessage = (id, data) => {
 			if(data.type == "start") {
-				if(this.state.gameState == States.NOT_STARTED) this.enterState(States.DRAWING);
-				console.log("can't start, already started");
+				if(this.state.gameState == States.NOT_STARTED) {
+					this.enterState(States.DRAWING);
+				}
+				else if(this.state.gameState == States.REVEAL) {
+					const options = [];
+					for(let key in this.state.drawings) {
+						if(this.state.drawings[key].captions && Object.keys(this.state.drawings[key].captions).length < 1) options.push(key);
+					}
+					if(options.length < 1) this.enterState(States.NOT_STARTED);
+					else {
+						this.setState({currentPlayer: options[Math.floor(Math.random()*options.length)]});
+						this.enterState(States.CAPTION);
+					}
+				}
+				else {
+					console.log("can't start, already started");
+				}
 			}
 			else if(data.type == "drawing") {
 				if(this.state.gameState != States.DRAWING) {
 					console.log("can't draw, already drawn");
 					return;
 				}
-				this.state.drawings[id] = {image:data.data,captions:{},choices:{}};
-				if(Object.keys(this.state.drawings).length >= this.state.players.length) {
+				this.state.drawings[id] = {prompt:(this.state.drawings[id]||{prompt:''}).prompt,image:data.data,captions:{},choices:{}};
+				if(Object.values(this.state.drawings).filter(value => {
+					return value.captions;
+				}).length >= this.state.players.length) {
 					this.setState({currentPlayer: this.state.players[Math.floor(Math.random()*this.state.players.length)]});
 					this.enterState(States.CAPTION);
 				}
@@ -117,13 +129,36 @@ export default class Screen extends preact.Component {
 			this.state.drawings = {};
 		}
 		else if(state == States.CHOOSE) {
-			this.state.captions = Object.keys(this.state.drawings[this.state.currentPlayer].captions).sort(()=>Math.random()-0.5).map(key => this.state.drawings[this.state.currentPlayer].captions[key]);
+			this.state.captions = Object.values(this.state.drawings[this.state.currentPlayer].captions).concat([this.state.drawings[this.state.currentPlayer].prompt]).sort(()=>Math.random()-0.5);
 			console.log(this.state.captions);
+		}
+		else if(state == States.REVEAL) {
+			const tr = {};
+			this.state.captions.forEach(caption => {
+				let fools = 0;
+				const choices = this.state.drawings[this.state.currentPlayer].choices;
+				for(let player in choices) {
+					const choice = choices[player];
+					if(choice == caption) fools++;
+				}
+				let correct = true;
+				for(let player in this.state.drawings[this.state.currentPlayer].captions) {
+					if(this.state.drawings[this.state.currentPlayer].captions[player] == caption) correct = false;
+				}
+				tr[caption] = {
+					correct,
+					fools
+				};
+			});
+			this.setState({results: tr});
 		}
 		this.state.players.forEach(player => {
 			let data;
 			if(state == States.DRAWING) {
 				data = "a donkey";
+				this.state.drawings[player] = {
+					prompt: data
+				};
 			}
 			else if(state == States.CHOOSE) {
 				data = this.state.captions;

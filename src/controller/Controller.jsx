@@ -1,6 +1,5 @@
 import preact from 'preact';
 import linkState from 'linkstate';
-import 'preact/devtools';
 
 import States from '../common/states';
 
@@ -13,11 +12,7 @@ export default class Controller extends preact.Component {
 			return <div>
 				not started
 			<br />
-			<button onClick={() => {
-				state.AC.message(AirConsole.SCREEN, {
-					type: "start"
-				});
-			}}>Start</button>
+			<button onClick={this.startGame}>Start</button>
 				</div>;
 		}
 		else if(state.gameState == States.DRAWING) {
@@ -49,6 +44,13 @@ export default class Controller extends preact.Component {
 				<CaptionList width="100%" captions={state.stateData} onClick={this.submitChoice.bind(this)} />
 			</div>;
 		}
+		else if(state.gameState == States.REVEAL) {
+			return <div>
+				Check the screen for the results!
+				<br />
+				<button onClick={this.startGame}>Continue</button>
+			</div>;
+		}
 		return <div>wut</div>;
 	}
 
@@ -74,6 +76,12 @@ export default class Controller extends preact.Component {
 			data: choice
 		});
 		this.state.done = true;
+	}
+
+	startGame = () => {
+		this.state.AC.message(AirConsole.SCREEN, {
+			type: 'start'
+		});
 	}
 
 	constructor() {
