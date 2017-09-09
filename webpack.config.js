@@ -21,5 +21,19 @@ module.exports = {
 			chunks: ['screen'],
 			template: './template.html'
 		})
-	]
+	],
+	module: {
+		rules: [
+			{
+				test: /\.jsx$/,
+				exclude: /node_modules/,
+				use: {
+					loader: 'babel-loader'
+				}
+			}
+		]
+	},
+	resolve: {
+		extensions: [".js", ".jsx"]
+	}
 };
