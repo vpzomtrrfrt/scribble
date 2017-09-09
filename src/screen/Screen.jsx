@@ -72,7 +72,10 @@ export default class Screen extends preact.Component {
 					for(let key in this.state.drawings) {
 						if(this.state.drawings[key].captions && Object.keys(this.state.drawings[key].captions).length < 1) options.push(key);
 					}
-					if(options.length < 1) this.enterState(States.NOT_STARTED);
+					if(options.length < 1) {
+						this.enterState(States.NOT_STARTED);
+						this.state.AC.showAd();
+					}
 					else {
 						this.setState({currentPlayer: options[Math.floor(Math.random()*options.length)]});
 						this.enterState(States.CAPTION);
