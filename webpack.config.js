@@ -13,11 +13,13 @@ module.exports = {
 	plugins: [
 		new HtmlWebpackPlugin({
 			filename: 'controller.html',
-			chunks: ['controller']
+			chunks: ['controller'],
+			template: './template.html'
 		}),
 		new HtmlWebpackPlugin({
 			filename: 'screen.html',
-			chunks: ['screen']
+			chunks: ['screen'],
+			template: './template.html'
 		})
 	]
 };
