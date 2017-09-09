@@ -60,11 +60,15 @@ export default class Screen extends preact.Component {
 		this.state.AC.onDisconnect = (id) => {
 			console.log(id, "disconnected!");
 			this.state.players.splice(this.state.players.indexOf(id), 1);
-			this.setState({});
+			this.checkState();
 		};
 		this.state.AC.onMessage = (id, data) => {
 			if(data.type == "start") {
 				if(this.state.gameState == States.NOT_STARTED) {
+					if(this.state.players.length < 2) {
+						console.log("can't start, only one player");
+						return;
+					}
 					this.enterState(States.DRAWING);
 				}
 				else if(this.state.gameState == States.REVEAL) {
@@ -91,36 +95,18 @@ export default class Screen extends preact.Component {
 					return;
 				}
 				this.state.drawings[id] = {prompt:(this.state.drawings[id]||{prompt:''}).prompt,image:data.data,captions:{},choices:{}};
-				if(Object.values(this.state.drawings).filter(value => {
-					return value.captions;
-				}).length >= this.state.players.length) {
-					this.setState({currentPlayer: this.state.players[Math.floor(Math.random()*this.state.players.length)]});
-					this.enterState(States.CAPTION);
-				}
-				else {
-					this.setState({});
-				}
+				this.checkState();
 			}
 			else if(data.type == "caption") {
 				if(this.state.gameState != States.CAPTION) {
 					console.log("can't caption, already captioned");
 				}
 				this.state.drawings[this.state.currentPlayer].captions[id] = data.data;
-				if(Object.keys(this.state.drawings[this.state.currentPlayer].captions).length >= this.state.players.length) {
-					this.enterState(States.CHOOSE);
-				}
-				else {
-					this.setState({});
-				}
+				this.checkState();
 			}
 			else if(data.type == "choice") {
 				this.state.drawings[this.state.currentPlayer].choices[id] = data.data;
-				if(Object.keys(this.state.drawings[this.state.currentPlayer].choices).length >= this.state.players.length) {
-					this.enterState(States.REVEAL);
-				}
-				else {
-					this.setState({});
-				}
+				this.checkState();
 			}
 			else {
 				console.log("Unrecognized command:", data);
@@ -164,10 +150,38 @@ export default class Screen extends preact.Component {
 					prompt: data
 				};
 			}
+			else if(state == States.CAPTION) {
+				if(player == this.state.currentPlayer) data = true;
+			}
 			else if(state == States.CHOOSE) {
 				data = this.state.captions;
 			}
 			this.state.AC.message(player, {type: "state", state: state, stateData: data});
 		});
+	}
+
+	checkState() {
+		if(this.state.gameState == States.DRAWING) {
+			if(Object.values(this.state.drawings).filter(value => {
+				return value.captions;
+			}).length >= this.state.players.length) {
+				this.setState({currentPlayer: this.state.players[Math.floor(Math.random()*this.state.players.length)]});
+				this.enterState(States.CAPTION);
+				return;
+			}
+		}
+		if(this.state.gameState == States.CAPTION) {
+			if(Object.keys(this.state.drawings[this.state.currentPlayer].captions).length >= this.state.players.filter(x => x != this.state.currentPlayer).length) {
+				this.enterState(States.CHOOSE);
+				return;
+			}
+		}
+		if(this.state.gameState == States.CHOOSE) {
+			if(Object.keys(this.state.drawings[this.state.currentPlayer].choices).length >= this.state.players.length) {
+				this.enterState(States.REVEAL);
+				return;
+			}
+		}
+		this.setState({});
 	}
 }

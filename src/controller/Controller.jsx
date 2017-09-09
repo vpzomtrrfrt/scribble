@@ -25,7 +25,7 @@ export default class Controller extends preact.Component {
 			</div>;
 		}
 		else if(state.gameState == States.CAPTION) {
-			if(this.state.done) {
+			if(state.stateData || state.done) {
 				return <div>Please wait for the other players</div>;
 			}
 			return <div>
