@@ -42,11 +42,11 @@ export default class Controller extends preact.Component {
 			</div>;
 		}
 		else if(state.gameState == States.CHOOSE) {
-			if(this.state.done) {
+			if(state.done) {
 				return <div>Please wait for the other players</div>;
 			}
 			return <div>
-				<CaptionList width="100%" captions={state.stateData} />
+				<CaptionList width="100%" captions={state.stateData} onClick={this.submitChoice.bind(this)} />
 			</div>;
 		}
 		return <div>wut</div>;
@@ -64,6 +64,14 @@ export default class Controller extends preact.Component {
 		this.state.AC.message(AirConsole.SCREEN, {
 			type: 'caption',
 			data: this.state.text
+		});
+		this.state.done = true;
+	}
+
+	submitChoice(choice) {
+		this.state.AC.message(AirConsole.SCREEN, {
+			type: 'choice',
+			data: choice
 		});
 		this.state.done = true;
 	}

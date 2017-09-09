@@ -82,7 +82,7 @@ export default class Screen extends preact.Component {
 					this.setState({});
 				}
 			}
-			else if(data.type == "choose") {
+			else if(data.type == "choice") {
 				this.state.drawings[this.state.currentPlayer].choices[id] = data.data;
 				this.setState({});
 			}
