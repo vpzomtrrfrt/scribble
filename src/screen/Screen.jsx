@@ -135,7 +135,8 @@ export default class Screen extends preact.Component {
 			this.state.drawings = {};
 		}
 		else if(state == States.CHOOSE) {
-			this.state.captions = Object.values(this.state.drawings[this.state.currentPlayer].captions).concat([this.state.drawings[this.state.currentPlayer].prompt]).sort(()=>Math.random()-0.5);
+			const prompt = this.state.drawings[this.state.currentPlayer].prompt;
+			this.state.captions = Object.values(this.state.drawings[this.state.currentPlayer].captions).filter(x => x != prompt).concat([prompt]).sort(()=>Math.random()-0.5);
 			console.log(this.state.captions);
 		}
 		else if(state == States.REVEAL) {
@@ -147,10 +148,7 @@ export default class Screen extends preact.Component {
 					const choice = choices[player];
 					if(choice == caption) fools++;
 				}
-				let correct = true;
-				for(let player in this.state.drawings[this.state.currentPlayer].captions) {
-					if(this.state.drawings[this.state.currentPlayer].captions[player] == caption) correct = false;
-				}
+				let correct = caption == this.state.drawings[this.state.currentPlayer].prompt;
 				tr[caption] = {
 					correct,
 					fools

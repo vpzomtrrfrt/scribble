@@ -17,6 +17,7 @@ export default class SketchCanvas extends preact.Component {
 		const canvas = this.base;
 		if(this.props.bind) this.props.bind(canvas);
 		const ctx = canvas.getContext('2d');
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		function drawLine(prev2, prev, now) {
 			ctx.beginPath();
