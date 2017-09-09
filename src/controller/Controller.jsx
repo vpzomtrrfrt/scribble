@@ -1,4 +1,5 @@
 import preact from 'preact';
+import linkState from 'linkstate';
 
 import States from '../common/states';
 
@@ -21,10 +22,20 @@ export default class Controller extends preact.Component {
 			return <div>
 				Please draw "{state.stateData}"
 				<br />
-				<SketchCanvas />
+				<SketchCanvas bind={linkState(this, 'canvas')} />
+				<br />
+				<button onClick={this.submitDrawing.bind(this)}>Submit</button>
 			</div>;
 		}
 		return <div>wut</div>;
+	}
+
+	submitDrawing() {
+		const drawing = this.state.canvas.toDataURL('image/png');
+		this.state.AC.message(AirConsole.SCREEN, {
+			type: 'drawing',
+			data: drawing
+		});
 	}
 
 	constructor() {

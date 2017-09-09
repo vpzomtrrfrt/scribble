@@ -2,7 +2,7 @@ import preact from 'preact';
 
 export default class SketchCanvas extends preact.Component {
 	render(props, state) {
-		return <canvas></canvas>;
+		return <canvas width="300" height="300" style="border: 2px solid grey"></canvas>;
 	}
 	offset(canvas, coords) {
 		const rect = canvas.getBoundingClientRect();
@@ -16,6 +16,16 @@ export default class SketchCanvas extends preact.Component {
 		if(this.props.bind) this.props.bind(canvas);
 		const ctx = canvas.getContext('2d');
 
+		function drawLine(prev, now) {
+			ctx.beginPath();
+			ctx.moveTo(prev.x, prev.y);
+			ctx.lineTo(now.x, now.y);
+			ctx.lineWith = 4;
+			ctx.strokeColor = "black";
+			ctx.stroke();
+			console.log(now);
+		}
+
 		const oldTouches = {};
 		canvas.ontouchstart = (evt) => {
 			const touches = evt.changedTouches;
@@ -23,6 +33,7 @@ export default class SketchCanvas extends preact.Component {
 				const touch = touches[i];
 				const id = touch.identifier;
 				oldTouches[id] = this.offset(canvas, {x: touch.pageX, y: touch.pageY});
+				drawLine(oldTouches[id], oldTouches[id]);
 			}
 		};
 		canvas.ontouchmove = (evt) => {
@@ -32,13 +43,7 @@ export default class SketchCanvas extends preact.Component {
 				const id = touch.identifier;
 				const prev = oldTouches[id];
 				const now = oldTouches[id] = this.offset(canvas, {x: touch.pageX, y: touch.pageY});
-				ctx.beginPath();
-				ctx.moveTo(prev.x, prev.y);
-				ctx.lineTo(now.x, now.y);
-				ctx.lineWith = 4;
-				ctx.strokeColor = "black";
-				ctx.stroke();
-				console.log(now);
+				drawLine(prev, now);
 			}
 		};
 	}

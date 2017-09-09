@@ -6,6 +6,19 @@ export default class Screen extends preact.Component {
 		if(state.gameState == States.NOT_STARTED) {
 			return <div>not started, {state.players.length} players</div>;
 		}
+		else if(state.gameState == States.DRAWING) {
+			return <div>
+				Please draw stuff now<br />
+				{Object.keys(this.state.drawings).length}/{state.players.length}
+				</div>;
+		}
+		else if(state.gameState == States.CAPTION) {
+			return <div style="display: flex; align-items: center; flex-direction: column; justify-content: space-around; height: 100%">
+				<div style="display: inline-flex">
+					<img src={state.drawings[state.currentPlayer]}></img>
+				</div>
+			</div>;
+		}
 		return <div>wut</div>;
 	}
 
@@ -29,6 +42,15 @@ export default class Screen extends preact.Component {
 				if(this.state.gameState == States.NOT_STARTED) this.enterState(States.DRAWING);
 				console.log("can't start, already started");
 			}
+			else if(data.type == "drawing") {
+				this.state.drawings[id] = data.data;
+				if(Object.keys(this.state.drawings).length >= this.state.players.length) {
+					this.enterState(States.CAPTION);
+				}
+				else {
+					this.setState({});
+				}
+			}
 			else {
 				console.log("Unrecognized command:", data);
 			}
@@ -38,6 +60,12 @@ export default class Screen extends preact.Component {
 
 	enterState(state) {
 		this.setState({gameState: state});
+		if(state == States.DRAWING) {
+			this.state.drawings = {};
+		}
+		else if(state == States.CAPTION) {
+			this.setState({currentPlayer: this.state.players[Math.floor(Math.random()*this.state.players.length)]});
+		}
 		this.state.players.forEach(player => {
 			let data;
 			if(state == States.DRAWING) {
