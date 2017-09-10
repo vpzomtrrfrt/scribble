@@ -36,7 +36,7 @@ export default class Screen extends preact.Component {
 			return <div>
 				Please draw stuff now<br />
 				{Object.values(this.state.drawings).filter(value => value.image).length}/{state.players.length}<br />
-				{donePlayers.map(key => <img class="smallProfile" src={state.AC.getProfilePicture(key)} />)}
+				{donePlayers.map(key => <img class="smallProfile" src={state.AC.getProfilePicture(state.AC.getUID(key))} />)}
 				{blankPlayers}
 			</div>;
 		}
@@ -192,6 +192,10 @@ export default class Screen extends preact.Component {
 							if(this.state.drawings[this.state.currentPlayer].choices[player] == caption) this.state.scores[player]--;
 						}
 					}
+				}
+				else {
+					const player = this.state.currentPlayer;
+					this.state.scores[player] = (this.state.scores[player] || 0) + fools - 1;
 				}
 				tr[caption] = {
 					correct,
