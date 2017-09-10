@@ -9,6 +9,9 @@ export default class SketchCanvas extends preact.Component {
 			<div class="colorChoice">
 				{["white", "black", "red", "lime", "blue", "peru"].map(color => <ColorChoice color={color} selected={color == this.state.color} change={linkState(this, 'color')} />)}
 			</div>
+			<div class="colorChoice">
+				{["yellow", "magenta", "cyan", "saddlebrown", "orange", "purple"].map(color => <ColorChoice color={color} selected={color == this.state.color} change={linkState(this, 'color')} locked={!props.premium} AC={props.AC} />)}
+			</div>
 			<div class="sizeChoice">
 				{[16, 32, 64, 128].map(size => <SizeChoice size={size} selected={size == this.state.size} change={linkState(this, 'size')} />)}
 			</div>
@@ -73,8 +76,13 @@ export default class SketchCanvas extends preact.Component {
 
 class ColorChoice extends preact.Component {
 	render(props, state) {
-		return <div><div class={props.selected ? 'selected' : ''} style={{backgroundColor: props.color}} onClick={props.change.bind(this, props.color)}></div></div>;
+		return <div class={props.locked ? 'locked' : ''} onClick={props.locked ? this.lockedCallback : props.change.bind(this, props.color)}><div class={props.selected ? 'selected' : ''} style={{backgroundColor: props.color}}></div></div>;
 	}
+
+	lockedCallback = () => {
+		console.log("trying to get premium");
+		this.props.AC.getPremium();
+	};
 }
 
 class SizeChoice extends preact.Component {

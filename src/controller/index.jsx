@@ -1,4 +1,5 @@
 import preact from 'preact';
+import 'preact/devtools';
 
 require('../common/main.scss');
 

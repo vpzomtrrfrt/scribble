@@ -19,7 +19,7 @@ export default class Controller extends preact.Component {
 			return <div>
 				Please draw "{state.stateData}"
 				<br />
-				<SketchCanvas bind={linkState(this, 'canvas')} premium={state.premium} />
+				<SketchCanvas bind={linkState(this, 'canvas')} premium={state.premium} AC={state.AC} />
 				<br />
 				<button onClick={this.submitDrawing.bind(this)}>Submit</button>
 			</div>;
