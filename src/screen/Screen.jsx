@@ -159,7 +159,14 @@ export default class Screen extends preact.Component {
 		else if(state == States.CHOOSE) {
 			const prompt = this.state.drawings[this.state.currentPlayer].prompt;
 			this.state.captions = Object.values(this.state.drawings[this.state.currentPlayer].captions).concat([prompt]);
-			this.state.captions = this.state.captions.filter((x, i) => this.state.captions.indexOf(x) == i).sort(()=>Math.random()-0.5);
+			const total = this.state.captions.length;
+			this.state.captions = this.state.captions.filter((x, i) => this.state.captions.indexOf(x) == i);
+			while(this.state.captions.length < total) {
+				const word = getWord();
+				if(this.state.captions.indexOf(word) > -1) continue;
+				this.state.captions.push(word);
+			}
+			this.state.captions = this.state.captions.sort(()=>Math.random()-0.5);
 			console.log(this.state.captions);
 		}
 		else if(state == States.REVEAL) {
