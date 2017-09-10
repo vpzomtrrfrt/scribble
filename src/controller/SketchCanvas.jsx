@@ -4,13 +4,13 @@ import linkState from 'linkstate';
 export default class SketchCanvas extends preact.Component {
 	render(props, state) {
 		return <div className={'sketchCanvas' + (props.premium ? ' premium' : '')}>
-			<canvas width="1200" height="1200" style="border: 2px solid grey; width: 90%"></canvas>
+			<canvas width="1200" height="1200" style="border: 2px solid grey; width: 90%; position: relative; left: 5%"></canvas>
 			<br />
 			<div class="colorChoice">
-				{["white", "black", "red", "lime", "blue", "peru"].map(color => <ColorChoice color={color} selected={color == this.state.color} change={linkState(this, 'color')} />)}
+				{["white", "black", "lightgrey", "lime", "blue", "peru"].map(color => <ColorChoice color={color} selected={color == this.state.color} change={linkState(this, 'color')} />)}
 			</div>
 			<div class="colorChoice">
-				{["yellow", "magenta", "cyan", "saddlebrown", "orange", "purple"].map(color => <ColorChoice color={color} selected={color == this.state.color} change={linkState(this, 'color')} locked={!props.premium} AC={props.AC} />)}
+				{["yellow", "magenta", "cyan", "saddlebrown", "red", "purple"].map(color => <ColorChoice color={color} selected={color == this.state.color} change={linkState(this, 'color')} locked={!props.premium} AC={props.AC} />)}
 			</div>
 			<div class="sizeChoice">
 				{[16, 32, 64, 128].map(size => <SizeChoice size={size} selected={size == this.state.size} change={linkState(this, 'size')} />)}
