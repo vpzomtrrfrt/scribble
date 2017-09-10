@@ -12,6 +12,17 @@ body {
 	}
 }
 
+button {
+	background-color: #5bc0de;
+	padding: .5em;
+	border-radius: .6em;
+	border: 1px solid #46b8da;
+	text-decoration: none;
+	&:not(:active) {
+		box-shadow: 0 1px 3px rgba(0,0,0,.26);
+	}
+}
+
 .caption {
 	border-radius: 10px;
 	border: 5px dotted purple;
