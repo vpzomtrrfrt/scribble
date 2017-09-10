@@ -6,7 +6,7 @@ export default class CaptionList extends preact.Component {
 		if(props.hide) {
 			children = [];
 			for(let key in props.captions) {
-				children.push(<Caption there={true} />);
+				children.push(<Caption there={true} image={props.AC.getProfilePicture(key)} />);
 			}
 			while(children.length < props.playerCount) {
 				children.push(<Caption there={false} />);
@@ -24,6 +24,9 @@ class Caption extends preact.Component {
 		return <div class={'caption'+(props.there?' there':'')} onClick={props.onClick}>
 			{(!("there" in props))&&(
 				<p>{props.caption}</p>
+			)}
+			{("image" in props)&&(
+				<img src={props.image} class="smallProfile" />
 			)}
 		</div>;
 	}

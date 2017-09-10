@@ -89,3 +89,13 @@ body {
 .sizeChoice > div > div {
 	background-color: black;
 }
+
+.smallProfile {
+	border-radius: 50%;
+	margin-right: .3em;
+	margin-left: .2em;
+	display: inline-block;
+	width: 64px;
+	height: 64px;
+	box-shadow: 0 0 4px black;
+}

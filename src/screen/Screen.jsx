@@ -1,4 +1,6 @@
 import preact from 'preact';
+import unorm from 'unorm';
+
 import States from '../common/states';
 import wordlist from '../common/words';
 import CaptionList from '../common/CaptionList';
@@ -8,7 +10,7 @@ import 'preact/devtools';
 console.log(wordlist);
 
 function getWord() {
-	return wordlist[Math.floor(Math.random()*wordlist.length)];
+	return unorm.nfc(wordlist[Math.floor(Math.random()*wordlist.length)]).trim();
 }
 
 export default class Screen extends preact.Component {
@@ -26,16 +28,23 @@ export default class Screen extends preact.Component {
 			</div>;
 		}
 		else if(state.gameState == States.DRAWING) {
+			const donePlayers = Object.keys(this.state.drawings).filter(key => this.state.drawings[key].image);
+			const blankPlayers = [];
+			for(let i = 0; i < state.players.length-donePlayers.length; i++) {
+				blankPlayers.push(<div class="smallProfile"></div>);
+			}
 			return <div>
 				Please draw stuff now<br />
-				{Object.values(this.state.drawings).filter(value => value.image).length}/{state.players.length}
-				</div>;
+				{Object.values(this.state.drawings).filter(value => value.image).length}/{state.players.length}<br />
+				{donePlayers.map(key => <img class="smallProfile" src={state.AC.getProfilePicture(key)} />)}
+				{blankPlayers}
+			</div>;
 		}
 		else if(state.gameState == States.CAPTION) {
 			return <div class="mainAreaThing">
 				<div>
 					<img src={state.drawings[state.currentPlayer].image}></img>
-					<CaptionList width="20%" hide={true} captions={state.drawings[state.currentPlayer].captions} playerCount={state.players.filter(x => x != state.currentPlayer).length} />
+					<CaptionList width="20%" hide={true} captions={state.drawings[state.currentPlayer].captions} playerCount={state.players.filter(x => x != state.currentPlayer).length} AC={state.AC} />
 				</div>
 			</div>;
 		}
@@ -127,7 +136,7 @@ export default class Screen extends preact.Component {
 				if(this.state.gameState != States.CAPTION) {
 					console.log("can't caption, already captioned");
 				}
-				this.state.drawings[this.state.currentPlayer].captions[id] = data.data;
+				this.state.drawings[this.state.currentPlayer].captions[id] = unorm.nfc(data.data).trim();
 				this.checkState();
 			}
 			else if(data.type == "choice") {
@@ -149,7 +158,8 @@ export default class Screen extends preact.Component {
 		}
 		else if(state == States.CHOOSE) {
 			const prompt = this.state.drawings[this.state.currentPlayer].prompt;
-			this.state.captions = Object.values(this.state.drawings[this.state.currentPlayer].captions).filter(x => x != prompt).concat([prompt]).sort(()=>Math.random()-0.5);
+			this.state.captions = Object.values(this.state.drawings[this.state.currentPlayer].captions).concat([prompt]);
+			this.state.captions = this.state.captions.filter((x, i) => this.state.captions.indexOf(x) == i).sort(()=>Math.random()-0.5);
 			console.log(this.state.captions);
 		}
 		else if(state == States.REVEAL) {
