@@ -2,5 +2,6 @@
 	"plugins": [
 		["transform-react-jsx", {"pragma":"preact.h"}],
 		["transform-class-properties"]
-	]
+	],
+	"presets": ['es2015']
 }
