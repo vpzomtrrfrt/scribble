@@ -59,6 +59,7 @@ export default class SketchCanvas extends preact.Component {
 				olderTouches[id] = oldTouches[id] = this.offset(canvas, {x: touch.pageX, y: touch.pageY});
 				drawLine(oldTouches[id], oldTouches[id], oldTouches[id]);
 			}
+			this.props.onChange();
 		};
 		canvas.ontouchmove = (evt) => {
 			const touches = evt.changedTouches;

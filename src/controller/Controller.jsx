@@ -9,19 +9,20 @@ import CaptionList from '../common/CaptionList';
 export default class Controller extends preact.Component {
 	render(props, state) {
 		if(state.gameState == States.NOT_STARTED) {
-			return <div>
-				not started
-			<br />
-			<button onClick={this.startGame}>Start</button>
-				</div>;
+			return <div class="messageScreen">
+				<div class="message">
+					Scribble
+				</div>
+				<div>
+					<button onClick={this.startGame}>Start</button>
+			</div></div>;
 		}
 		else if(state.gameState == States.DRAWING) {
 			return <div>
 				Please draw "{state.stateData}"
 				<br />
-				<SketchCanvas bind={linkState(this, 'canvas')} premium={state.premium} AC={state.AC} />
-				<br />
-				<button onClick={this.submitDrawing.bind(this)}>Submit</button>
+				<SketchCanvas bind={linkState(this, 'canvas')} premium={state.premium} AC={state.AC} onChange={() => this.setState({done: false})} />
+				<button disabled={state.done} onClick={this.submitDrawing.bind(this)}>{state.done ? 'Submitted' : 'Submit'}</button>
 			</div>;
 		}
 		else if(state.gameState == States.CAPTION) {
@@ -60,6 +61,9 @@ export default class Controller extends preact.Component {
 			type: 'drawing',
 			data: drawing
 		});
+		this.setState({
+			done: true
+		});
 	}
 
 	submitCaption() {
@@ -67,7 +71,7 @@ export default class Controller extends preact.Component {
 			type: 'caption',
 			data: this.state.text
 		});
-		this.state.done = true;
+		this.setState({done: true});
 	}
 
 	submitChoice(choice) {
@@ -75,7 +79,7 @@ export default class Controller extends preact.Component {
 			type: 'choice',
 			data: choice
 		});
-		this.state.done = true;
+		this.setState({done: true});
 	}
 
 	startGame = () => {
