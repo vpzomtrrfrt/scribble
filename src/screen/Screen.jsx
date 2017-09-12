@@ -16,15 +16,15 @@ function getWord() {
 export default class Screen extends preact.Component {
 	render(props, state) {
 		if(state.gameState == States.NOT_STARTED) {
-			return <div>
-				not started, {state.players.length} players
-				<br />
-				{this.state.scores && <center>
+			return <div class="messageScreen">
+				<div class="message">Scribble</div>
+				<small>{state.players.length} players have joined</small>
+				{this.state.scores && <div>
 					<h1>Scores</h1>
 					{Object.keys(this.state.scores).sort((a, b) => this.state.scores[b]-this.state.scores[a]).map(key => {
 						return <h3>{this.state.AC.getNickname(key)} - {this.state.scores[key]}</h3>;
 					})}
-				</center>}
+				</div>}
 			</div>;
 		}
 		else if(state.gameState == States.DRAWING) {
